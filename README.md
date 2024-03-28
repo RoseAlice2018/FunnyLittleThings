@@ -7,3 +7,8 @@
 ### [SpiderForVedio](https://github.com/RoseAlice2018/FunnyLittleThings/tree/master/SpiderForVedio0)
 
 - 爬取某网站视频所写，全部为m3u8地址，然后根据地址下载视频。
+
+
+### [WorkMeasurePage] 
+
+- 衡量计算工作评分的页面
