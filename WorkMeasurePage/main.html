@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>工作评估表</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+<style>
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table, th, td {
+  border: 1px solid greenyellow;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: white;
+}
+</style>    
+</head>
+<body>
+    <table id="evaluationTable">
+        <thead>
+            <tr>
+                <th>评估指标</th>
+                <th>数值</th>
+                <th>系数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>工作时长</td>
+                <td><input type="number" id="workHours"/></td>
+                <td><input type="number" id="workHoursCoefficient"/></td>
+            </tr>
+            <tr>
+                <td>工作氛围</td>
+                <td><input type="number" id="workEnvironment" /></td>
+                <td><input type="number" id="workEnvironmentCoefficient" /></td>
+            </tr>
+            <tr>
+                <td>工作前景</td>
+                <td><input type="number" id="jobProspects" /></td>
+                <td><input type="number" id="jobProspectsCoefficient" /></td>
+            </tr>
+            <tr>
+                <td>薪资</td>
+                <td><input type="number" id="salary" /></td>
+                <td><input type="number" id="salaryCoefficient" /></td>
+            </tr>
+            <tr>
+                <td>工作成本</td>
+                <td><input type="number" id="jobCost" /></td>
+                <td><input type="number" id="jobCostCoefficient" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">最终值: <span id="finalValue"></span></td>
+                <td>&nbsp;</td>
+            </tr>
+        </tfoot>
+    </table>
+    <script >
+        function calculateFinalValue() {
+  var workHours = parseInt(document.getElementById("workHours").value);
+  var workHoursCoefficient = parseInt(document.getElementById("workHoursCoefficient").value);
+  var workEnvironment = parseInt(document.getElementById("workEnvironment").value);
+  var workEnvironmentCoefficient = parseInt(document.getElementById("workEnvironmentCoefficient").value);
+  var jobProspects = parseInt(document.getElementById("jobProspects").value);
+  var jobProspectsCoefficient = parseInt(document.getElementById("jobProspectsCoefficient").value);
+  var salary = parseInt(document.getElementById("salary").value);
+  var salaryCoefficient = parseInt(document.getElementById("salaryCoefficient").value);
+  var jobCost = parseInt(document.getElementById("jobCost").value);
+  var jobCostCoefficient = parseInt(document.getElementById("jobCostCoefficient").value);
+
+  var finalValue = workHours * workHoursCoefficient + workEnvironment * workEnvironmentCoefficient + jobProspects * jobProspectsCoefficient + salary * salaryCoefficient + jobCost * jobCostCoefficient;
+  document.getElementById("finalValue").innerHTML = finalValue;
+}
+
+document.getElementById("workHours").addEventListener("change", calculateFinalValue);
+document.getElementById("workHoursCoefficient").addEventListener("change", calculateFinalValue);
+document.getElementById("workEnvironment").addEventListener("change", calculateFinalValue);
+document.getElementById("workEnvironmentCoefficient").addEventListener("change", calculateFinalValue);
+document.getElementById("jobProspects").addEventListener("change", calculateFinalValue);
+document.getElementById("jobProspectsCoefficient").addEventListener("change", calculateFinalValue);
+document.getElementById("salary").addEventListener("change", calculateFinalValue);
+document.getElementById("salaryCoefficient").addEventListener("change", calculateFinalValue);
+document.getElementById("jobCost").addEventListener("change", calculateFinalValue);
+document.getElementById("jobCostCoefficient").addEventListener("change", calculateFinalValue);
+    </script>
+</body>
+</html>
