@@ -37,6 +37,9 @@ password_entry.pack()
 app_name_entry = tk.Entry(root)
 app_name_entry.pack()
 
+# 创建一个文本框用以显示查询的key
+query_entry = tk.Entry(root)
+query_entry.pack()
 
 # 创建一个文本框用以显示解密后的密码
 decrypted_password = tk.Entry(root)
@@ -61,10 +64,27 @@ def on_button_click():
 
 # 创建一个查询按钮
 def on_query_button_click():
+    key = query_entry.get()
+    with open(path, "r") as file:
+        lines = file.readlines()
+        encrypted_key = lines[0].strip().split(": ")[1]
+        encrypted_app_name = lines[1].strip().split(": ")[1]
+        encrypted_password = lines[2].strip().split(": ")[2]
+
+    if encrypted_key == key:
+        decrypted_password.delete(0, tk.END)
+        decrypted_password.insert(0, decrypted_password)
+    else:
+        decrypted_password.delete(0, tk.END)
+        decrypted_password.insert(0, "INVALID KEY")
+        
     
 
 button = tk.Button(root, text="提交", command=on_button_click)
 button.pack()
+
+query_button = tk.Button(root, text="查询", command=on_query_button_click)
+query_button.pack()
 
 # 进入消息循环
 root.mainloop()
