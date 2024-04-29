@@ -22,3 +22,16 @@ path: H:\Work\pasworddatabase\Password.txt
 
 - log_level: 日志等级
 - path：database存储的路径
+
+- [X] 4.29.2024 完成支持AppName的更新
+- [X] 4.29.2024 完成基本加密算法
+- [X] 4.29.2024 完成支持KeyList查询
+- [ ] 完成基本功能后，写一篇Blog
+
+## 未来工作
+
+* [ ] 优化界面（目前的界面风格过于丑陋）
+* [ ] 支持Password的云端布置，手机端和PC端的共享数据。
+* [ ] 支持依据用户Key生成特定加密算法，并且在用户输入特定Key之后才能正确解压PassWord
+* [ ] 手机端App
+* [ ] Linux系统一键布置
