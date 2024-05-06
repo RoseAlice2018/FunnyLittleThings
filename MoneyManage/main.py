@@ -29,13 +29,31 @@ target_money_val.grid(row=0, column=1)
 cash_label = tk.Label(root, text="现金或现金等价物: ")
 cash_label.grid(row=1, column=0)
 
-cash_val   = tk.Label(root, text="")
+cash_val   = tk.Label(root, text="10")
 cash_val.grid(row=1, column=1)
 
-# 股票
-# 期货
-# 加密货币
 
+# 股票
+# Stock
+stock_label = tk.Label(root, text="股票")
+stock_label.grid(row=2, column=0)
+
+stock_val = tk.Label(root, text="10")
+stock_val.grid(row=2, column=1)
+
+# 期货
+future_label = tk.Label(root, text="期货")
+future_label.grid(row=3, column=0)
+
+future_val = tk.Label(root, text="10")
+future_val.grid(row=3, column=1)
+
+# 加密货币
+btc_label = tk.Label(root, text="加密货币")
+btc_label.grid(row=4, column=0)
+
+btc_val = tk.Label(row=4, text="10")
+btc_val.grid(row=4, column=1)
 
 # 执行
 root.mainloop()
