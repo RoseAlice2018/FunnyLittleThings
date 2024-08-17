@@ -10,6 +10,9 @@
 # 策略类 （Strategy）：负责根据市场信息生成指标，根据指标决定买卖；
 # 回测类框架 （Backtest）: 包含一个策略类和一个交易所类，负责迭代的
 
+import numpy as np
+import abc
+
 
 def assert_msg(condition, msg):
     if not condition:
