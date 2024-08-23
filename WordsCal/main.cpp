@@ -47,12 +47,13 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
 
         std::string filepath = dir_path + "/" + date_str + ".txt";
 
-        outfile.open(filepath, std::ios_base::app);
+        outfile.open(filepath.c_str(), std::ios_base::app);
         if(!outfile.is_open()){
             std::cerr << "Error opening file: " << filepath << std::endl;
             return -1;
         }
         outfile << "当前计算文件路径名:" << filename << " 字节数:" << sb->st_size << std::endl;
+        std::cout<<filepath<<std::endl;
         outfile.close();
     }
     return 0;
