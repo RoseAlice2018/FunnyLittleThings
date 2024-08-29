@@ -1,6 +1,5 @@
 #include <iostream>
 #include <ftw.h>
-#include <cstring>
 #include <fstream>
 #include <cerrno>
 #include <ctime>
@@ -8,8 +7,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string>
 #include <mysql.h>
-
 
 class DatabaseConnection{
     private:
@@ -56,7 +55,7 @@ class DatabaseConnection{
 
         // 加入数据的方法
         bool insertData(const std::string& table, const std::string& filename,
-                            const std::string& date, const std::string bytes){
+                            const std::string& date, const std::string& bytes){
             if(conn == NULL){
                 std::cerr<<"Database connection is not initialized."<<std::endl;
                 return false;
@@ -135,7 +134,8 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
         outfile.close();
 
         DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", "user", "password", "database");
-        if(!dbconn->insertData("Tablename", filename, date_str, std::to_string(sb->st_size))){
+        std::string bytes = std::to_string((int)sb->st_size);
+        if(!dbconn->insertData("FileBytesCounts", filename, date_str, bytes)){
             std::cerr<<"Failed to insert data into the database." <<std::endl;
             return -1;
         }
