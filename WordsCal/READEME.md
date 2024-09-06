@@ -15,6 +15,8 @@
 ## 功能
 1. 实现每日，每周，每月的开发和文档增量数据统计
 2. 一个合理和美观的展现方式
+3. 可以配置指定的文件夹和分文件夹展示
+4. 支持功能插件
 ## 表格设计
 1. WordsCal Table
 ```
@@ -27,3 +29,10 @@ CREATE TABLE WORDSCAL(
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
 )ENGINE=InnoDB;
 ```
+## 目录结构
+1. calspy
+- 展现数据的python文件
+2. config
+- 配置目录
+3. 主目录
+- main.py
