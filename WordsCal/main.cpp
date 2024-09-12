@@ -23,20 +23,29 @@ struct DBConfig{
     std::string password;
 };
 
+struct FilePathConfig{
+    std::string filepath;
+};
+
 static DBConfig db_config;
+static FilePathConfig file_config;
 
 int _init_config()
 {
-    std::ifstream configFile("./config/db.json");
+    std::ifstream configFile("./config/config.json");
     if(configFile.is_open())
     {
         configFile >> configJson;
         configFile.close();   
+        // db
         db_config.dbname = configJson["database"]["dbname"];
         db_config.dbtable = configJson["database"]["table"];
         db_config.user = configJson["database"]["user"];
         db_config.password = configJson["database"]["password"];
+        // file
+        file_config.filepath = configJson["filepath"]["mainpath"];
     }
+
     return 0;
 }
 
@@ -198,7 +207,6 @@ void TestMySQLConnection()
 }
 
 int main(){
-    const char *path = "."; // 从当前目录开始遍历
     int flags = FTW_PHYS;   // 使用物理路径，不跟随符号链接
 
     int ret = 0;
@@ -212,7 +220,7 @@ int main(){
 
     //TestMySQLConnection();
     //使用nftw递归遍历目录
-    if(nftw(path, fileCallback, 20, flags) == -1){
+    if(nftw(file_config.filepath.c_str(), fileCallback, 20, flags) == -1){
         std::cerr<<"Error occurred during directory traversal"<<std::endl;
         return 1;
     }

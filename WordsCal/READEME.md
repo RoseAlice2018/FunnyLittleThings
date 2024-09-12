@@ -36,3 +36,13 @@ CREATE TABLE WORDSCAL(
 - 配置目录
 3. 主目录
 - main.py
+
+## Update记录
+```
+9.11
+- 完成makefile编译
+
+9.12 
+- main文件跑通流程 完成对文件的遍历和插入mysql数据库
+- Todo：实现文件path的配置
+```

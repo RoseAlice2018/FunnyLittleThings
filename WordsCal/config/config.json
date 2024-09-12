@@ -4,5 +4,8 @@
         "table": "WORDSCAL",
         "user": "root",
         "password": "Aa123456/"
+    },
+    "filepath":{
+        "mainpath": "./"
     }
 }
