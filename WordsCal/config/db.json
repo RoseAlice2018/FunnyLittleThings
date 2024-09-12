@@ -1,0 +1,8 @@
+{
+    "database":{
+        "dbname": "WORDSCALS",
+        "table": "WORDSCAL",
+        "user": "root",
+        "password": "Aa123456/"
+    }
+}

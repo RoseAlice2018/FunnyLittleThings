@@ -9,6 +9,50 @@
 #include <unistd.h>
 #include <string>
 #include <mysql.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+// 数据库配置
+json configJson;
+
+struct DBConfig{
+    std::string dbname;
+    std::string dbtable;
+    std::string user;
+    std::string password;
+};
+
+static DBConfig db_config;
+
+int _init_config()
+{
+    std::ifstream configFile("./config/db.json");
+    if(configFile.is_open())
+    {
+        configFile >> configJson;
+        configFile.close();   
+        db_config.dbname = configJson["database"]["dbname"];
+        db_config.dbtable = configJson["database"]["table"];
+        db_config.user = configJson["database"]["user"];
+        db_config.password = configJson["database"]["password"];
+    }
+    return 0;
+}
+
+int init()
+{
+    int ret = 0;
+    // init config
+    ret =  _init_config();
+    if(ret != 0)
+    {
+        // error log
+        return ret;
+    }
+    return ret;
+}
+
 
 class DatabaseConnection{
     private:
@@ -60,7 +104,7 @@ class DatabaseConnection{
                 std::cerr<<"Database connection is not initialized."<<std::endl;
                 return false;
             }
-            std::string query = "INSERT INTO" + table + "(FileID, Date, ByteCount) VALUES ('" + filename 
+            std::string query = "INSERT INTO " + table + " (file_name, record_date, file_size) VALUES ('" + filename 
                         + "','" + date + "','" + bytes + "')";
             if(mysql_query(conn, query.c_str())){
                 std::cerr<<"mysql_query() failed: "<<mysql_error(conn)<<std::endl;
@@ -108,7 +152,7 @@ std::string getCurrentDate(){
 // 回调函数，用于处理每个文件或目录
 int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
-    MYSQL *conn = DatabaseConnection::getInstance("host", "user", "password", "database")->getConnection();
+    MYSQL *conn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str())->getConnection();
     if(conn == NULL){
         std::cerr<<"DatabaseConnection is not initialized"<<std::endl;
         return -1;
@@ -133,9 +177,9 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
         std::cout<<filepath<<std::endl;
         outfile.close();
 
-        DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", "user", "password", "database");
+        DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str());
         std::string bytes = std::to_string((int)sb->st_size);
-        if(!dbconn->insertData("FileBytesCounts", filename, date_str, bytes)){
+        if(!dbconn->insertData("WORDSCAL", filename, date_str, bytes)){
             std::cerr<<"Failed to insert data into the database." <<std::endl;
             return -1;
         }
@@ -143,31 +187,31 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
     return 0;
 }
 
+void TestMySQLConnection()
+{
+    MYSQL *conn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str())->getConnection();
+    if(conn == NULL){
+        std::cerr<<"DatabaseConnection is not initialized"<<std::endl;
+        return;
+    }
+    std::cerr<<"DatabaseConnection is OK"<<std::endl;
+}
+
 int main(){
     const char *path = "."; // 从当前目录开始遍历
     int flags = FTW_PHYS;   // 使用物理路径，不跟随符号链接
 
-    // MySQL配置
-    const char *hostname = "";
-    const char *username = "";
-    const char *password = "";
-    const char *database = "";
-    
-    // MySQL数据库连接
-    MYSQL *conn = mysql_init(NULL);
-    if (conn == NULL){
-        std::cerr<<"mysql_init() failed\n";
-        return 1;
-    }
+    int ret = 0;
 
-    if(mysql_real_connect(conn, hostname, username, password, database, 0, NULL, 0) == NULL)
+    ret = init();
+    if(ret != 0)
     {
-        std::cerr<<"mysql_real_connect() failed: "<<mysql_error(conn)<<std::endl;
-        mysql_close(conn);
-        return 1;
+        // error log
+        return ret;
     }
 
-    // 使用nftw递归遍历目录
+    //TestMySQLConnection();
+    //使用nftw递归遍历目录
     if(nftw(path, fileCallback, 20, flags) == -1){
         std::cerr<<"Error occurred during directory traversal"<<std::endl;
         return 1;
