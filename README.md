@@ -14,5 +14,5 @@
 - 衡量计算工作评分的页面
 
 ### [WordsCal](https://github.com/RoseAlice2018/FunnyLittleThings/tree/master/WordsCal)
-- 计算每日提交
+- 计算每日提交(https://github.com/RoseAlice2018/FunnyLittleThings/blob/master/WordsCal/READEME.md)
 
