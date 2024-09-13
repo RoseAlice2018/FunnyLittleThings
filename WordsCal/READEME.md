@@ -44,5 +44,9 @@ CREATE TABLE WORDSCAL(
 
 9.12 
 - main文件跑通流程 完成对文件的遍历和插入mysql数据库
-- Todo：实现文件path的配置
+- 实现文件path的配置
+9.13
+- Todo： 读取数据库实现每日增幅曲线绘制
+- Todo： 读取数据库实现每周增幅曲线绘制
+- Todo： 实现每月曲线绘制
 ```
