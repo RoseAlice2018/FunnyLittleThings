@@ -13,10 +13,11 @@ def readconfig():
 def connect_to_db():
     data = readconfig()
     conn = mysql.connector.connect(
-        host="localhost",
+        # host="localhost",
         user=data['database']['user'],
         password=data['database']['password'],
-        database=data['database']['dbname']
+        database=data['database']['dbname'],
+        unix_socket='/var/run/mysqld/mysqld.sock'
     )
     return conn
 
@@ -25,12 +26,12 @@ def read_data_weekly(filename):
     conn = connect_to_db()
     cursor = conn.cursor()
     sql = f"""
-    SELECT record_data, file_size
+    SELECT record_date, file_size
     FROM WORDSCAL
     WHERE file_name = '{filename}'
-    AND record_date BETWEEN DATA_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()
+    AND record_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()
     """
-    cursor.excute(sql)
+    cursor.execute(sql)
     results = cursor.fetchall()
     record_data = [item[0] for item in results]
     file_sizes = [item[1] for item in results]
@@ -49,8 +50,8 @@ def read_data_weekly(filename):
     # 显示图例
     plt.legend(['File Size'])
 
-    # 显示图表
-    plt.show()    
+    # save图表
+    plt.savefig('test.png')
 
 # 主函数
 def main():
