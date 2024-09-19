@@ -7,5 +7,9 @@
     },
     "filepath":{
         "mainpath": "./"
+    },
+    "savepath":{
+        "defaultpath": "./saveimg",
+        "specifypath": ""
     }
 }

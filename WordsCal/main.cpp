@@ -10,7 +10,8 @@
 #include <string>
 #include <mysql.h>
 #include <nlohmann/json.hpp>
-
+#include <set>
+#include <regex>
 using json = nlohmann::json;
 
 // 数据库配置
@@ -27,8 +28,20 @@ struct FilePathConfig{
     std::string filepath;
 };
 
+struct SkipFileConfig{
+    std::set<std::string> skipDirectories;
+    std::set<std::string> skipFiles;
+};
+
+
 static DBConfig db_config;
 static FilePathConfig file_config;
+static SkipFileConfig skip_config;
+
+std::string trim(const std::string& str) {
+    const std::regex trimRegex("^\\s+|\\s+$");
+    return std::regex_replace(str, trimRegex, "");
+}
 
 int _init_config()
 {
@@ -44,6 +57,22 @@ int _init_config()
         db_config.password = configJson["database"]["password"];
         // file
         file_config.filepath = configJson["filepath"]["mainpath"];
+        //skip
+        std::string skipDirectories = configJson["skippath"]["skipdirectories"];
+        std::string skipFiles = configJson["skippath"]["skipfile"];
+
+        std::istringstream dirStream(skipDirectories);
+        std::string dirName;
+        while(std::getline(dirStream, dirName, ',')){
+            skip_config.skipDirectories.insert(trim(dirName));
+            std::cout<<"dirname:"<<dirName<<std::endl;
+        }
+        std::istringstream filestream(skipFiles);
+        std::string filename;
+        while(std::getline(filestream, filename, ',')){
+            skip_config.skipFiles.insert(trim(filename));
+            std::cout<<"filename:"<<filename<<std::endl;
+        }
     }
 
     return 0;
@@ -161,6 +190,23 @@ std::string getCurrentDate(){
 // 回调函数，用于处理每个文件或目录
 int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
+    // skip
+    std::string basename = fpath;
+    size_t pos = basename.find_last_of("/\\");
+    if (pos != std::string::npos) {
+        basename = basename.substr(pos + 1);
+    }
+    std::cout<<"fpath："<<basename<<std::endl;
+    // 检查是否是目录且需要跳过
+    if (typeflag == FTW_D && skip_config.skipDirectories.find(basename) != skip_config.skipDirectories.end()) {
+        return FTW_SKIP_SUBTREE; // 跳过当前目录及其子目录
+    }
+
+    // 检查是否是文件且需要跳过
+    if (typeflag == FTW_F && skip_config.skipFiles.find(basename) != skip_config.skipFiles.end()) {
+        return 0; // 跳过当前文件
+    }
+
     MYSQL *conn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str())->getConnection();
     if(conn == NULL){
         std::cerr<<"DatabaseConnection is not initialized"<<std::endl;
@@ -182,8 +228,8 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
             std::cerr << "Error opening file: " << filepath << std::endl;
             return -1;
         }
-        outfile << "当前计算文件路径名:" << filename << " 字节数:" << sb->st_size << std::endl;
-        std::cout<<filepath<<std::endl;
+        // outfile << "当前计算文件路径名:" << filename << " 字节数:" << sb->st_size << std::endl;
+        //std::cout<<filepath<<std::endl;
         outfile.close();
 
         DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str());

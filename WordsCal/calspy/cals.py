@@ -9,7 +9,9 @@ def readconfig():
         data = json.load(file)
         return data
 
-# 连接数据库
+localsavepath = readconfig()['savepath']['defaultpath']
+
+# 连接数据库 
 def connect_to_db():
     data = readconfig()
     conn = mysql.connector.connect(
@@ -51,7 +53,7 @@ def read_data_weekly(filename):
     plt.legend(['File Size'])
 
     # save图表
-    plt.savefig('test.png')
+    plt.savefig('{}/{}.png'.format(localsavepath, filename))
 
 # 主函数
 def main():
