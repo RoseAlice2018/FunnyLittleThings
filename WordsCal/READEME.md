@@ -51,4 +51,10 @@ CREATE TABLE WORDSCAL(
 - 测试整个流程
 - 实现filename自动读取生成
 - 实现filename指定生成path
+9.19
+- main文件遍历时提供跳过指定文件夹和文件功能(下个版本优化)
+- python遍历展示图片提供指令操纵(下个版本优化)
+- 优化Readme 
+- 优化配置文件
+- 自动化全流程
 ```

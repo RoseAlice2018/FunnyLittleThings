@@ -9,7 +9,11 @@
         "mainpath": "./"
     },
     "savepath":{
-        "defaultpath": "./saveimg",
+        "defaultpath": "./calspy/saveimg",
         "specifypath": ""
+    },
+    "skippath":{
+        "skipdirectories": "./bin, ./data, ./include, ./lib, ./lib64, ./share",
+        "skipfile": ""
     }
 }
