@@ -57,4 +57,8 @@ CREATE TABLE WORDSCAL(
 - 优化Readme 
 - 优化配置文件
 - 自动化全流程
+9.20
+- main文件遍历提供跳过指定文件和文件夹功能
+- python读取配置实现指令操控
+- 自动化流程
 ```
