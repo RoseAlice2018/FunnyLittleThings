@@ -37,6 +37,14 @@ CREATE TABLE WORDSCAL(
 3. 主目录
 - main.py
 
+## 自动化执行
+```
+crontab -e
+在末尾追加
+0 8 * * * /path/to/your/main_program  // 每天早上八点执行main
+systemctl restart cron // 重启服务
+```
+
 ## Update记录
 ```
 9.11
@@ -61,4 +69,8 @@ CREATE TABLE WORDSCAL(
 - main文件遍历提供跳过指定文件和文件夹功能
 - python读取配置实现指令操控
 - 自动化流程
+9.23
+- 拆分图片展示，展示为全部文件，同时下面区分每个文件的增量
+- main程序自动化执行
 ```
+

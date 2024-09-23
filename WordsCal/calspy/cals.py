@@ -116,9 +116,9 @@ def main():
     arg2 = sys.argv[2]
     if arg1 == ExcuteArg.WEEKLY:
         read_data_weekly(arg2)
-    elif agr1 == ExcuteArg.MONTHLY:
+    elif arg1 == ExcuteArg.MONTHLY:
         read_data_monthly(arg2)
-    elif agr1 == ExcuteArg.QUARTERLY:
+    elif arg1 == ExcuteArg.QUARTERLY:
         read_data_quarterly(arg2)
     elif arg1 == ExcuteArg.YEARLY:
         read_data_yearly(arg2)

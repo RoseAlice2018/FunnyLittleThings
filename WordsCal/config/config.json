@@ -13,7 +13,7 @@
         "specifypath": ""
     },
     "skippath":{
-        "skipdirectories": "./bin, ./data, ./include, ./lib, ./lib64, ./share",
+        "skipdirectories": " ./bin, ./data, ./include, ./lib, ./lib64, ./share",
         "skipfile": ""
     }
 }

@@ -65,13 +65,13 @@ int _init_config()
         std::string dirName;
         while(std::getline(dirStream, dirName, ',')){
             skip_config.skipDirectories.insert(trim(dirName));
-            std::cout<<"dirname:"<<dirName<<std::endl;
+            std::cout<<"dirname:"<<trim(dirName)<<std::endl;
         }
         std::istringstream filestream(skipFiles);
         std::string filename;
         while(std::getline(filestream, filename, ',')){
             skip_config.skipFiles.insert(trim(filename));
-            std::cout<<"filename:"<<filename<<std::endl;
+            std::cout<<"filename:"<<trim(filename)<<std::endl;
         }
     }
 
@@ -190,20 +190,32 @@ std::string getCurrentDate(){
 // 回调函数，用于处理每个文件或目录
 int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
-    // skip
-    std::string basename = fpath;
-    size_t pos = basename.find_last_of("/\\");
-    if (pos != std::string::npos) {
-        basename = basename.substr(pos + 1);
+    for (const auto& dir : skip_config.skipDirectories) {
+        std::cout << "Skip directory: " << dir << std::endl;
     }
-    std::cout<<"fpath："<<basename<<std::endl;
-    // 检查是否是目录且需要跳过
-    if (typeflag == FTW_D && skip_config.skipDirectories.find(basename) != skip_config.skipDirectories.end()) {
-        return FTW_SKIP_SUBTREE; // 跳过当前目录及其子目录
+    // skip
+    std::string basepath = fpath;
+    size_t pos = basepath.find_last_of("/\\");
+    if (pos != std::string::npos) {
+        basepath = basepath.substr(0, pos);
     }
 
+    std::string basename = fpath;
+    size_t last_oeprator = basename.find_last_of("/\\");
+    if (last_oeprator != std::string::npos){
+        basename = basename.substr(last_oeprator + 1);
+    }
+
+    std::cout<<"fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
+    // 检查是否是目录且需要跳过
+    if (skip_config.skipDirectories.find(basepath) != skip_config.skipDirectories.end()) {
+        std::cout<<"Hi Skip Here"<<fpath<<" "<<basename<<std::endl;
+        return FTW_SKIP_SUBTREE; // 跳过当前目录及其子目录
+    }
+    std::cout<<"we don't skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
     // 检查是否是文件且需要跳过
     if (typeflag == FTW_F && skip_config.skipFiles.find(basename) != skip_config.skipFiles.end()) {
+        std::cout<<"we  skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
         return 0; // 跳过当前文件
     }
 
@@ -215,22 +227,24 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
 
     // 检查是否是普通文件
     if (typeflag == FTW_F){
+        std::cout<<"we have fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
         std::string filename = std::string(fpath);
         std::ofstream outfile;
         std::string date_str = getCurrentDate();
         std::string dir_path = "./data";
         ensureDirExists(dir_path);
 
-        std::string filepath = dir_path + "/" + date_str + ".txt";
+        //这里主要是不操作数据库，而通过txt存储数据。
+        //std::string filepath = dir_path + "/" + date_str + ".txt";
 
-        outfile.open(filepath.c_str(), std::ios_base::app);
-        if(!outfile.is_open()){
-            std::cerr << "Error opening file: " << filepath << std::endl;
-            return -1;
-        }
+        //outfile.open(filepath.c_str(), std::ios_base::app);
+        // if(!outfile.is_open()){
+        //     std::cerr << "Error opening file: " << filepath << std::endl;
+        //     return -1;
+        // }
         // outfile << "当前计算文件路径名:" << filename << " 字节数:" << sb->st_size << std::endl;
         //std::cout<<filepath<<std::endl;
-        outfile.close();
+        //outfile.close();
 
         DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str());
         std::string bytes = std::to_string((int)sb->st_size);
@@ -266,7 +280,7 @@ int main(){
 
     //TestMySQLConnection();
     //使用nftw递归遍历目录
-    if(nftw(file_config.filepath.c_str(), fileCallback, 20, flags) == -1){
+    if(nftw(file_config.filepath.c_str(), fileCallback, 1000, flags) == -1){
         std::cerr<<"Error occurred during directory traversal"<<std::endl;
         return 1;
     }

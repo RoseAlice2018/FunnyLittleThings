@@ -1,0 +1,45 @@
+dirname:./bin
+dirname:./data
+dirname:./include
+dirname:./lib
+dirname:./lib64
+dirname:./share
+Skip directory: ./bin
+Skip directory: ./data
+Skip directory: ./include
+Skip directory: ./lib
+Skip directory: ./lib64
+Skip directory: ./share
+fpath：.
+basename .
+we don't skip fpath：.
+basename .
+Skip directory: ./bin
+Skip directory: ./data
+Skip directory: ./include
+Skip directory: ./lib
+Skip directory: ./lib64
+Skip directory: ./share
+fpath：.
+basename test.md
+we don't skip fpath：.
+basename test.md
+Skip directory: ./bin
+Skip directory: ./data
+Skip directory: ./include
+Skip directory: ./lib
+Skip directory: ./lib64
+Skip directory: ./share
+fpath：.
+basename bin
+we don't skip fpath：.
+basename bin
+Skip directory: ./bin
+Skip directory: ./data
+Skip directory: ./include
+Skip directory: ./lib
+Skip directory: ./lib64
+Skip directory: ./share
+fpath：./bin
+basename python3
+Hi Skip Here./bin/python3 python3
