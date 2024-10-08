@@ -190,6 +190,26 @@ std::string getCurrentDate(){
 // 回调函数，用于处理每个文件或目录
 int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
+    std::string dir_path = "./data";
+    ensureDirExists(dir_path);
+    std::ofstream outfile, out1file;
+    std::string date_str = getCurrentDate();
+    std::string filepath = dir_path + "/" + date_str + ".txt";
+    std::string fpathtrace = dir_path + "/" + date_str + "trace.txt";
+
+    out1file.open(fpathtrace.c_str(), std::ios_base::app);
+    if(typeflag == FTW_D && skip_config.skipDirectories.find(fpath) != skip_config.skipDirectories.end())
+    {
+        out1file<<"fpath: "<<fpath<<std::endl;
+        return FTW_SKIP_SUBTREE;
+    }
+
+    outfile.open(filepath.c_str(), std::ios_base::app);
+    if(!outfile.is_open())
+    {
+        std::cerr<<"Error opening file: "<<filepath<<std::endl;
+    }
+
     for (const auto& dir : skip_config.skipDirectories) {
         std::cout << "Skip directory: " << dir << std::endl;
     }
@@ -205,17 +225,16 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
     if (last_oeprator != std::string::npos){
         basename = basename.substr(last_oeprator + 1);
     }
-
-    std::cout<<"fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
+    //outfile<<"fpath:"<<basepath<<std::endl<<"basename "<<basename<<std::endl;
     // 检查是否是目录且需要跳过
     if (skip_config.skipDirectories.find(basepath) != skip_config.skipDirectories.end()) {
-        std::cout<<"Hi Skip Here"<<fpath<<" "<<basename<<std::endl;
-        return FTW_SKIP_SUBTREE; // 跳过当前目录及其子目录
+        outfile<<"Hi Skip Here"<<fpath<<" "<<basename<<std::endl;
+        return 0; // 跳过当前目录及其子目录
     }
-    std::cout<<"we don't skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
+    //outfile<<"we don't skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
     // 检查是否是文件且需要跳过
     if (typeflag == FTW_F && skip_config.skipFiles.find(basename) != skip_config.skipFiles.end()) {
-        std::cout<<"we  skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
+        outfile<<"we  skip fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
         return 0; // 跳过当前文件
     }
 
@@ -229,22 +248,6 @@ int fileCallback(const char *fpath, const struct stat *sb, int typeflag, struct 
     if (typeflag == FTW_F){
         std::cout<<"we have fpath："<<basepath<<std::endl<<"basename "<<basename<<std::endl;
         std::string filename = std::string(fpath);
-        std::ofstream outfile;
-        std::string date_str = getCurrentDate();
-        std::string dir_path = "./data";
-        ensureDirExists(dir_path);
-
-        //这里主要是不操作数据库，而通过txt存储数据。
-        //std::string filepath = dir_path + "/" + date_str + ".txt";
-
-        //outfile.open(filepath.c_str(), std::ios_base::app);
-        // if(!outfile.is_open()){
-        //     std::cerr << "Error opening file: " << filepath << std::endl;
-        //     return -1;
-        // }
-        // outfile << "当前计算文件路径名:" << filename << " 字节数:" << sb->st_size << std::endl;
-        //std::cout<<filepath<<std::endl;
-        //outfile.close();
 
         DatabaseConnection *dbconn = DatabaseConnection::getInstance("localhost", db_config.user.c_str(), db_config.password.c_str(), db_config.dbname.c_str());
         std::string bytes = std::to_string((int)sb->st_size);
@@ -268,7 +271,7 @@ void TestMySQLConnection()
 
 int main(){
     int flags = FTW_PHYS;   // 使用物理路径，不跟随符号链接
-
+    flags |= FTW_ACTIONRETVAL; /* Assume callback to return FTW_* values instead of zero to continue and non-zero to terminate.  */
     int ret = 0;
 
     ret = init();
